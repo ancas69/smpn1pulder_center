@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - SMP Negeri 1 Pulau Derawan</title>
-  <link rel="stylesheet" href="style.css" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
-</head>
-<body>
-  <!-- Background animasi -->
+@extends('auth.templates.login_templates')
+@section('content')
   <div class="bg-animation">
     <span></span><span></span><span></span><span></span><span></span>
   </div>
@@ -21,7 +9,7 @@
       <!-- Logo & Judul -->
       <div class="login-header">
         <div class="logo">
-          <i class="fa-solid fa-school"></i>
+          <img src="{{asset('images/logo_smp.png')}}"></img>
         </div>
         <h1>SMP Negeri 1 Pulau Derawan</h1>
         <p>Silakan masuk ke akun Anda</p>
@@ -56,7 +44,7 @@
         </div>
 
         <!-- Tombol -->
-        <button type="submit" class="btn-login" id="btnLogin">
+        <button type="submit" class="btn-primary" id="btnLogin">
           <span class="btn-text">Masuk</span>
           <i class="fa-solid fa-arrow-right btn-icon"></i>
         </button>
@@ -67,11 +55,8 @@
 
       <!-- Footer -->
       <div class="login-footer">
-        <p>&copy; 2024 SMP Negeri 1 Pulau Derawan</p>
+        <p>&copy; 2026 SMP Negeri 1 Pulau Derawan</p>
       </div>
     </div>
   </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+@endsection
