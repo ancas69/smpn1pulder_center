@@ -25,9 +25,10 @@
     <section class="features" id="fitur">
         <h2 class="section-title">Layanan & Informasi</h2>
         
+        
         <div class="feature-grid">
             <!-- Card 1 -->
-            <div class="feature-card">
+            <div class="feature-card" id="elearning">
                 <div class="feature-icon">
                     <i class="fa-solid fa-book-open"></i>
                 </div>
@@ -59,5 +60,8 @@
     <footer style="padding: 30px; text-align: center; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 14px; position: relative; z-index: 1;">
         <p>&copy; {{ date('Y') }} SMP Negeri 1 Pulau Derawan. All rights reserved.</p>
     </footer>
+
+    <script src="{{asset('js/home.js')}}"></script>
+    
 
 @endsection

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MapelController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', function () {
@@ -13,3 +14,5 @@ Route::get('/', function () {
 Route::get('/tentang', function (){
     return view('public.halaman_tentang');
 })->name('tentang');
+
+Route::get('/mapel', [MapelController::class, 'tampilkan_semua_mapel'])->name('mapel');
