@@ -26,14 +26,16 @@ body {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-  overflow: hidden;
+  /* Perbaikan: Gunakan overflow-y agar bisa discroll di mobile, dan overflow-x hidden agar tidak ada scroll ke samping */
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   color: var(--text-light);
 }
 
 /* ================= BACKGROUND ANIMASI (GLOBAL) ================= */
 .bg-animation {
-  position: absolute;
+  position: fixed; /* Fixed agar tetap di belakang saat di-scroll */
   inset: 0;
   overflow: hidden;
   z-index: 0;
@@ -199,3 +201,69 @@ body {
 .message.show { opacity: 1; }
 .message.error { color: var(--error); }
 .message.success { color: var(--success); }
+
+
+/* ========================================================
+   MEDIA QUERIES (RESPONSIVE UNTUK MOBILE & TABLET)
+   ======================================================== */
+@media (max-width: 768px) {
+  /* Penyesuaian umum untuk layar kecil */
+  body {
+    padding: 20px 10px; /* Beri jarak di pinggir layar agar tidak mentok */
+  }
+
+  .input-group input {
+    padding: 14px 40px 14px 42px; /* Sedikit lebih kecil */
+    font-size: 14px;
+  }
+
+  .input-group label {
+    left: 42px;
+    font-size: 13px;
+  }
+
+  .input-icon {
+    left: 14px;
+    font-size: 14px;
+  }
+
+  .btn-primary {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Penyesuaian khusus HP */
+  .bg-animation span {
+    /* Perkecil animasi background agar tidak terlalu ramai di HP */
+    transform: scale(0.7); 
+  }
+}
+
+/* ================= KOMPONEN CARD (GLOBAL) ================= */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border);
+  border-radius: 22px; /* Sudut membulat */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45); /* Bayangan tebal */
+  padding: 35px; /* Jarak dalam card */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efek interaktif saat di-hover (opsional) */
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Responsif untuk Card di Mobile */
+@media (max-width: 768px) {
+  .card {
+    padding: 25px 20px; /* Padding lebih kecil di HP */
+    border-radius: 16px;
+  }
+}
