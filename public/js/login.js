@@ -2,7 +2,7 @@
 const form = document.getElementById('loginForm');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
-const togglePassword = document.getElementById('togglePassword');
+const togglePassword = document.getElementById('lihatPW');
 const btnLogin = document.getElementById('btnLogin');
 const message = document.getElementById('message');
 const rememberCheckbox = document.getElementById('remember');
@@ -18,6 +18,7 @@ togglePassword.addEventListener('click', () => {
     'aria-label',
     isPassword ? 'Sembunyikan password' : 'Tampilkan password'
   );
+ 
 });
 
 // ================= TAMPILKAN PESAN =================

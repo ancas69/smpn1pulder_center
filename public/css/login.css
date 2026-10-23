@@ -125,3 +125,41 @@
   .login-header h1 { font-size: 16px; }
   .logo { width: 60px; height: 60px; }
 }
+
+/* ================= TOMBOL KEMBALI (TOP LEFT) ================= */
+.btn-back {
+  position: absolute; /* Mengambang bebas dari alur form */
+  top: 30px;          /* Jarak dari atas layar */
+  left: 40px;         /* Jarak dari kiri layar */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.05); /* Latar transparan */
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none; /* Menghilangkan garis bawah link */
+  transition: all 0.3s ease;
+  z-index: 10; /* Memastikan berada di atas elemen lain */
+}
+
+/* Efek saat kursor diarahkan ke tombol */
+.btn-back:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateX(-5px); /* Sedikit bergeser ke kiri sebagai interaksi */
+}
+
+/* Penyesuaian untuk layar HP */
+@media (max-width: 480px) {
+  .btn-back {
+    top: 20px;
+    left: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}

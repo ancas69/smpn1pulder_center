@@ -4,6 +4,8 @@
     <span></span><span></span><span></span><span></span><span></span>
   </div>
 
+  <a class="btn-back" href="{{route('home')}}">Kembali</a>
+
   <div class="login-container">
     <div class="login-card">
       <!-- Logo & Judul -->
@@ -29,7 +31,7 @@
           <i class="fa-solid fa-lock input-icon"></i>
           <input type="password" id="password" placeholder=" " autocomplete="current-password" required />
           <label for="password">Password</label>
-          <button type="button" class="toggle-password" id="togglePassword" aria-label="Tampilkan password">
+          <button type="button" class="toggle-password" id="lihatPW" aria-label="Tampilkan password">
             <i class="fa-solid fa-eye"></i>
           </button>
         </div>
