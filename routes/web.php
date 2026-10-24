@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\MapelController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/login', function () {
-    return view('auth.login.halaman_login');
-})->name('login');
+
+Route::get('/login', [LoginController::class, 'halaman_login'])->name('login');
+Route::post('/masuk', [LoginController::class, 'login'])->name('login_masuk');
 
 Route::get('/', function () {
     return view('public.halaman_home');
@@ -16,3 +19,13 @@ Route::get('/tentang', function (){
 })->name('tentang');
 
 Route::get('/mapel', [MapelController::class, 'tampilkan_semua_mapel'])->name('mapel');
+
+
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
+
+Route::get('/user/home', [UserController::class, 'halaman_user'])->name('user.home')->middleware('auth');
+Route::get('/logout', function (){
+    auth()->logout();
+    return redirect('/'); // Kembali ke halaman depan
+})->name('logout')->middleware('auth');

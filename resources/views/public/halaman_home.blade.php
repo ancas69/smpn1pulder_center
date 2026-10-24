@@ -1,17 +1,18 @@
-@extends('public.public_templates')
+@extends('templates.public_templates')
 
 @section('title', 'Beranda - SMP Negeri 1 Pulau Derawan')
 
 @section('content')
 
-    
+
 
     <!-- HERO SECTION -->
     <section class="hero" id="beranda">
         <div class="hero-content">
             <h1>Selamat Datang di Portal Resmi SMP Negeri 1 Pulau Derawan</h1>
-            <p>Mewujudkan generasi yang CERDAS (Cerdas, Religius, Disiplin, Aktif, dan Santun) berbasis teknologi dan berwawasan lingkungan bahari.</p>
-            
+            <p>Mewujudkan generasi yang CERDAS (Cerdas, Religius, Disiplin, Aktif, dan Santun) berbasis teknologi dan
+                berwawasan lingkungan bahari.</p>
+
             <div class="hero-buttons">
                 <a href="{{ route('login') }}" class="btn-hero-primary">
                     Masuk ke Sistem <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
@@ -24,8 +25,8 @@
     <!-- FITUR SECTION -->
     <section class="features" id="fitur">
         <h2 class="section-title">Layanan & Informasi</h2>
-        
-        
+
+
         <div class="feature-grid">
             <!-- Card 1 -->
             <div class="feature-card" id="elearning">
@@ -57,11 +58,12 @@
     </section>
 
     <!-- FOOTER SEDERHANA -->
-    <footer style="padding: 30px; text-align: center; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 14px; position: relative; z-index: 1;">
+    <footer
+        style="padding: 30px; text-align: center; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 14px; position: relative; z-index: 1;">
         <p>&copy; {{ date('Y') }} SMP Negeri 1 Pulau Derawan. All rights reserved.</p>
     </footer>
 
-    <script src="{{asset('js/home.js')}}"></script>
-    
+    <script src="{{ asset('js/home.js') }}"></script>
+
 
 @endsection
