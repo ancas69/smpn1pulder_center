@@ -9,16 +9,18 @@ const rememberCheckbox = document.getElementById('remember');
 
 // ================= TOGGLE PASSWORD =================
 togglePassword.addEventListener('click', () => {
-  const isPassword = passwordInput.type === 'password';
-  passwordInput.type = isPassword ? 'text' : 'password';
-  togglePassword.innerHTML = isPassword
-    ? '<i class="fa-solid fa-eye-slash"></i>'
-    : '<i class="fa-solid fa-eye"></i>';
-  togglePassword.setAttribute(
-    'aria-label',
-    isPassword ? 'Sembunyikan password' : 'Tampilkan password'
-  );
- 
+    const iconElement = togglePassword.querySelector('i');
+    if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    iconElement.classList.remove('fa-eye');
+    iconElement.classList.add('fa-eye-slash');
+    togglePassword.setAttribute('aria-label', 'Sembunyikan password');
+    } else {
+    passwordInput.type = 'password';
+    iconElement.classList.remove('fa-eye-slash');
+    iconElement.classList.add('fa-eye');
+    togglePassword.setAttribute('aria-label', 'Tampilkan password');
+    }
 });
 
 // ================= TAMPILKAN PESAN =================
