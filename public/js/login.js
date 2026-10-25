@@ -1,6 +1,6 @@
 // ================= ELEMEN =================
 const form = document.getElementById('loginForm');
-const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const togglePassword = document.getElementById('lihatPW');
 const btnLogin = document.getElementById('btnLogin');
@@ -35,18 +35,18 @@ function showMessage(text, type = 'error') {
 
 // ================= VALIDASI =================
 function validateForm() {
-  const username = usernameInput.value.trim();
+  const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
-  if (!username) {
-    showMessage('⚠️ Username / NISN wajib diisi!');
-    usernameInput.focus();
+  if (!email) {
+    showMessage('⚠️ Email wajib diisi!');
+    emailInput.focus();
     return false;
   }
 
-  if (username.length < 3) {
-    showMessage('⚠️ Username minimal 3 karakter!');
-    usernameInput.focus();
+  if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showMessage('⚠️ Format email tidak valid!');
+    emailInput.focus();
     return false;
   }
 
@@ -67,58 +67,61 @@ function validateForm() {
 
 // ================= SUBMIT =================
 form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  // Simulasi loading
-  btnLogin.classList.add('loading');
-  btnLogin.disabled = true;
+    // Simulasi loading
+    btnLogin.classList.add('loading');
+    btnLogin.disabled = true;
 
-  // Simulasi proses login (ganti dengan fetch ke API sebenarnya)
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Simulasi proses login (ganti dengan fetch ke API sebenarnya)
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  // Simulasi kredensial berhasil
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
+    // Simulasi kredensial berhasil
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-  // 🔑 Ganti logika ini dengan autentikasi server sesungguhnya
-  const isDemo = username === 'admin' && password === 'admin123';
+    const res = await fetch('/masuk', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value
+        },
+        body: JSON.stringify({ email: email, password: password, remember: rememberCheckbox.checked })
+    });
 
-  if (isDemo) {
-    showMessage('✅ Login berhasil! Mengarahkan...', 'success');
+    const data = await res.json();
+    if (data.success === true) {
+        showMessage(data.message, 'success');
 
-    if (rememberCheckbox.checked) {
-      localStorage.setItem('smpn1_derawan_user', username);
+        // Reset animasi tombol
+        btnLogin.classList.remove('loading');
+        btnLogin.disabled = false;
+
+        setTimeout(() => {
+           window.location.href = data.redirect_url; // halaman tujuan
+        }, 1200);
+    } else {
+        btnLogin.classList.remove('loading');
+        btnLogin.disabled = false;
+        showMessage(data.message || '❌ Email atau password salah!');
+        passwordInput.value = '';
+        passwordInput.focus();
+        passwordInput.type = 'password';
+        togglePassword.innerHTML = '<i class="fa-solid fa-eye"></i>';
     }
-
-    // Reset animasi tombol
-    btnLogin.classList.remove('loading');
-    btnLogin.disabled = false;
-
-    setTimeout(() => {
-      window.location.href = 'dashboard.html'; // halaman tujuan
-    }, 1200);
-  } else {
-    btnLogin.classList.remove('loading');
-    btnLogin.disabled = false;
-    showMessage('❌ Username atau password salah!');
-    passwordInput.value = '';
-    passwordInput.focus();
-    passwordInput.type = 'password';
-    togglePassword.innerHTML = '<i class="fa-solid fa-eye"></i>';
-  }
 });
 
 // ================= AUTOFILL USERNAME =================
 window.addEventListener('DOMContentLoaded', () => {
   const savedUser = localStorage.getItem('smpn1_derawan_user');
   if (savedUser) {
-    usernameInput.value = savedUser;
+    emailInput.value = savedUser;
     rememberCheckbox.checked = true;
     passwordInput.focus();
   } else {
-    usernameInput.focus();
+    emailInput.focus();
   }
 });
 

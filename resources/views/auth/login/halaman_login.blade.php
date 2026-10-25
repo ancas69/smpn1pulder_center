@@ -18,12 +18,13 @@
             </div>
 
             <!-- Form -->
-            <form id="loginForm" novalidate method="POST" action="{{ route('login_masuk') }}">
+            <form id="loginForm">
+                @csrf
                 <!-- Username -->
                 <div class="input-group">
                     <i class="fa-solid fa-user input-icon"></i>
-                    <input type="text" id="username" placeholder=" " name="email" autocomplete="username" required />
-                    <label for="username">Email</label>
+                    <input type="text" id="email" placeholder=" " name="email" autocomplete="username" required />
+                    <label for="email">Email</label>
                 </div>
 
                 <!-- Password -->
@@ -44,7 +45,10 @@
                         <span>Ingat saya</span>
                     </label>
                     <a href="#" class="forgot">Lupa password?</a>
+                    <a href="{{ route('register') }}" class="forgot">Daftar</a>
                 </div>
+
+
 
                 <!-- Tombol -->
                 <button type="submit" class="btn-primary" id="btnLogin">

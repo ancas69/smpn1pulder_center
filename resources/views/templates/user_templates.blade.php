@@ -23,7 +23,10 @@
         </a>
         <div class="nav-links">
 
-            <a href="{{ route('logout') }}" class="btn-nav-login" id="tombol_login">Logout</a>
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn-primary" id="tombol_login">Logout</button>
+            </form>
         </div>
     </nav>
 

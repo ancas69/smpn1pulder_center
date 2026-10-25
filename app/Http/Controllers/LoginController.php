@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -24,14 +23,25 @@ class LoginController extends Controller
 
         // Coba login
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate(); // Keamanan: cegah session fixation
-            return redirect()->intended(route('user.home')); // Redirect ke halaman tujuan
+            // $request->session()->regenerate(); // Keamanan: cegah session fixation
+            // return redirect()->intended(route('user.home')); // Redirect ke halaman tujuan
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Login berhasil!',
+                'redirect_url' => route('user.home'),
+            ]);
+        }else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau password salah!',
+            ]);
         }
 
-        // Jika gagal
-        throw ValidationException::withMessages([
-            'email' => __('auth.failed'),
-        ]);
+        // // Jika gagal
+        // throw ValidationException::withMessages([
+        //     'email' => __('auth.failed'),
+        // ]);
     }
 
 
