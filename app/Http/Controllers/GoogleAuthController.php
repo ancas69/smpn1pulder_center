@@ -12,6 +12,8 @@ class GoogleAuthController extends Controller
     public function redirect()
     {
         return Socialite::driver('google')->redirect();
+        // $url = Socialite::driver('google')->redirect()->getTargetUrl();
+        // dd($url); // Hentikan proses dan tampilkan URL
     }
 
     // 2. Menangani balasan (callback) dari Google setelah login
