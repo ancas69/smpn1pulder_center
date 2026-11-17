@@ -62,3 +62,20 @@
     }
   });
 })();
+
+  /* ---------- 4. PROSES LOGOUT (POST Method) ---------- */
+  const btnLogout = document.getElementById('btn-logout');
+  
+  if (btnLogout) {
+    btnLogout.addEventListener('click', function (e) {
+      e.preventDefault(); // Mencegah link '#' melompat ke atas
+      
+      if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
+        // Ambil form tersembunyi dan submit
+        const logoutForm = document.getElementById('logout-form');
+        if (logoutForm) {
+          logoutForm.submit();
+        }
+      }
+    });
+  }

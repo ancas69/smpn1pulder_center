@@ -10,6 +10,9 @@
   <link rel="stylesheet" href="{{ asset('css/admin.css') }}"
 </head>
 <body>
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
 <div class="app-container" id="appContainer">
   <!-- SIDEBAR MODERN (TEMA PENDIDIKAN) -->
   <aside class="sidebar">
@@ -28,6 +31,13 @@
       <a href="#" class="nav-item"><i class="fas fa-futbol"></i> Ekstrakurikuler</a>
       <a href="#" class="nav-item"><i class="fas fa-bell"></i> Notifikasi</a>
     </nav>
+
+    <div style="padding: 0 16px; margin-bottom: 10px;">
+        <!-- Hapus onclick, ganti dengan id -->
+        <a href="#" class="nav-item" id="btn-logout" style="color: var(--danger);">
+            <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i> Keluar / Logout
+        </a>
+    </div>
 
     <!-- TEMA WARNA -->
     <div class="theme-section">

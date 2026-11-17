@@ -25,7 +25,7 @@ Route::post('/register/akun', [\App\Http\Controllers\RegisterController::class, 
 Route::get('/unlock-account/{token}', [LoginController::class, 'unlockAccount'])->name('unlock.account');
 
 Route::get('/user/home', [UserController::class, 'halaman_home'])->name('user.home')->middleware('auth');
-Route::get('/admin/home', [AdminController::class, 'halaman_home'])->name('admin.home');
+Route::get('/admin/home', [AdminController::class, 'halaman_home'])->name('admin.home')->middleware('auth');
 Route::post('/auuuuuuu', function (){
     Auth::logout();
     return redirect('/'); // Kembali ke halaman depan
