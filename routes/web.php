@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MapelController;
@@ -23,7 +24,8 @@ Route::get('/register', [\App\Http\Controllers\RegisterController::class, 'halam
 Route::post('/register/akun', [\App\Http\Controllers\RegisterController::class, 'register'])->name('register.submit');
 Route::get('/unlock-account/{token}', [LoginController::class, 'unlockAccount'])->name('unlock.account');
 
-Route::get('/user/home', [UserController::class, 'halaman_user'])->name('user.home')->middleware('auth');
+Route::get('/user/home', [UserController::class, 'halaman_home'])->name('user.home')->middleware('auth');
+Route::get('/admin/home', [AdminController::class, 'halaman_home'])->name('admin.home');
 Route::post('/auuuuuuu', function (){
     Auth::logout();
     return redirect('/'); // Kembali ke halaman depan

@@ -55,13 +55,26 @@ class LoginController extends Controller
                 'blokir' => false,
                 'unlock_token_expires_at' => null,
             ]);
+            $role = $user->role;
 
+            if($role === "admin"){
+                $url =route("admin.home");
+            }else if($role === "murid")
+            {
+                $url = "";
+            }else if($role === "guru"){
+                $url = "";
+            }else{
+                $url = "/";
+            }
+            
             $request->session()->regenerate();
 
             return response()->json([
+                'role' => $role,
                 'success' => true,
                 'message' => 'Login berhasil!',
-                'redirect_url' => route('user.home'),
+                'redirect_url' => $url,
             ]);
         }
 

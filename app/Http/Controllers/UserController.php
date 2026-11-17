@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function halaman_user(){
+    public function halaman_home(){
         return view('user.home');
     }
 }

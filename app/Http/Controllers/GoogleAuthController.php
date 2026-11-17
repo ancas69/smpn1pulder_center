@@ -46,7 +46,20 @@ class GoogleAuthController extends Controller
             Auth::login($user);
 
             // Arahkan ke halaman dashboard/home setelah berhasil
-            return redirect(route('user.home'));
+
+            $role = $user->role;
+
+            if($role === "admin"){
+                $url =route("admin.home");
+            }else if($role === "murid")
+            {
+                $url = "";
+            }else if($role === "guru"){
+                $url = "";
+            }else{
+                $url = route("user.home");
+            }
+            return redirect($url);
 
         } catch (\Exception $e) {
         //dd($e->getMessage());
