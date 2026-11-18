@@ -25,9 +25,19 @@ Route::post('/register/akun', [\App\Http\Controllers\RegisterController::class, 
 Route::get('/unlock-account/{token}', [LoginController::class, 'unlockAccount'])->name('unlock.account');
 
 Route::get('/user/home', [UserController::class, 'halaman_home'])->name('user.home')->middleware('auth');
+
 Route::get('/admin/home', [AdminController::class, 'halaman_home'])->name('admin.home')->middleware('auth');
+Route::get('/admin/pengguna', [AdminController::class, 'halaman_pengguna'])->name('admin.pengguna')->middleware('auth');
+
+
+
+
 Route::post('/auuuuuuu', function (){
     Auth::logout();
     return redirect('/'); // Kembali ke halaman depan
 })->name('logout')->middleware('auth');
+
+
+
+Route::post('/allUsers', [AdminController::class, 'tampilkan_semua_pengguna'])->name('admin.allUsers')->middleware('auth');
 
