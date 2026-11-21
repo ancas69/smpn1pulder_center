@@ -29,4 +29,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function student()
+    {
+        // Asumsi tabel students punya kolom 'user_id'
+        return $this->hasOne(Student::class);
+    }
+
+    public function guru()
+    {
+        return $this->hasOne(Teacher::class);
+    }
+
+    public function wali()
+    {
+        return $this->hasOne(WaliMurid::class);
+    }
 }

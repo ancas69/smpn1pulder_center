@@ -30,7 +30,8 @@
     { id: 10, name: 'Hendra Wijaya', email: 'hendra@wali.com', role: 'wali', status: 'active', nis: '-', wa: '081355556666' },
     { id: 11, name: 'Maria Ulfa', email: 'maria@wali.com', role: 'wali', status: 'active', nis: '-', wa: '081377778888' },
     { id: 12, name: 'Yusuf Hamid', email: 'yusuf@wali.com', role: 'wali', status: 'active', nis: '-', wa: '081399990000' },
-  ];
+  ]; // sudah gak di pakek , udah dari database
+
 
   // ==================== DOM CACHE ====================
   const els = {
@@ -53,11 +54,14 @@
     inputName: document.getElementById('inputName'),
     inputEmail: document.getElementById('inputEmail'),
     inputRole: document.getElementById('inputRole'),
-    inputNis: document.getElementById('inputNis'),
+    inputNisn: document.getElementById('inputNisn'),
     inputWa: document.getElementById('inputWa'),
     inputPassword: document.getElementById('inputPassword'),
     nisGroup: document.getElementById('nisGroup'),
     waGroup: document.getElementById('waGroup'),
+    idModal: document.getElementById('idModal'),
+    inputChild: document.getElementById('inputChild'),
+    childGroup: document.getElementById('childGroup'),
     btnCancel: document.getElementById('btnCancel'),
     // delete modal
     deleteModal: document.getElementById('deleteModal'),
@@ -74,14 +78,11 @@
     return meta ? meta.getAttribute('content') : '';
   }
 
-  /**
-   * Ambil data pengguna dari server.
-   * @returns {Promise<Array>}
-   */
+  /** Ambil data pengguna dari server. @returns {Promise<Array>} */
   async function fetchUsers() {
     // Jika untuk mengambil data juga pakai POST, tambahkan method: 'POST' dan X-CSRF-TOKEN
     const res = await fetch('/allUsers', {
-      method: 'POST', 
+      method: 'POST',
       headers: {
         'Accept': 'application/json',
         'X-CSRF-TOKEN': getCsrfToken()
@@ -95,11 +96,7 @@
     return await res.json();
   }
 
-  /**
-   * Simpan pengguna (create / update) menggunakan POST.
-   * @param {Object} payload
-   * @returns {Promise<Object>}
-   */
+  /** Simpan pengguna (create / update) menggunakan POST. @param {Object} payload @returns {Promise<Object>} */
   async function saveUser(payload) {
     // Tentukan URL berbeda untuk Edit dan Tambah Baru, namun tetap pakai method POST
     const url = payload.id ? `/api/pengguna/update/${payload.id}` : '/api/pengguna/store';
@@ -120,28 +117,98 @@
     }
 
     return await res.json();
-  }
+    }
 
-  /**
-   * Hapus pengguna menggunakan POST.
-   * @param {number} id
-   * @returns {Promise<void>}
-   */
-  async function deleteUser(id) {
-    const res = await fetch(`/api/pengguna/delete/${id}`, {
+    /** Ambil daftar murid dari server (belum punya wali) untuk dipilih di form wali */
+    async function fetchChildren() {
+    try {
+    const res = await fetch('/api/murid', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'X-CSRF-TOKEN': getCsrfToken()
       }
     });
-
     if (!res.ok) {
-      throw new Error(`Gagal menghapus (${res.status})`);
+      throw new Error(`Gagal ambil data murid (${res.status})`);
     }
+    return await res.json();
+    } catch (err) {
+    console.error('fetchChildren error:', err);
+    return [];
+    }
+    }
+
+    /** Hapus pengguna menggunakan POST. @param {number} id @returns {Promise<void>} */
+    async function deleteUser(id) {
+    const res = await fetch(`/api/pengguna/delete/${id}`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'X-CSRF-TOKEN': getCsrfToken()
+    }
+    });
+    const data = await res.json();
+    await init();
+    console.log(data);
+    if (!data.success) {
+    throw new Error(`(${data.message || 'Gagal menghapus'})`);
+    }
+    }
+
+    /** Isi dropdown pilihan anak dengan daftar murid dari server
+    *  @param {Array} muridList
+    */
+    function renderChildrenOptions(muridList) {
+    els.inputChild.innerHTML = '';
+    if (!muridList || muridList.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'Tidak ada murid yang belum di-assign wali.';
+      opt.disabled = true;
+      els.inputChild.appendChild(opt);
+      return;
+    }
+    muridList.forEach((m) => {
+      const opt = document.createElement('option');
+      opt.value = m.nisn;
+      opt.textContent = `${m.name}  (${m.nisn})`;
+      els.inputChild.appendChild(opt);
+    });
+  }
+
+  // ==================== FILTERING ====================
+  function getFilteredUsers() {
+    return state.users.filter((u) => {
+      const matchRole = state.filteredRole === 'all' || u.role === state.filteredRole;
+      const q = state.searchQuery.toLowerCase();
+      const matchSearch =
+        !q ||
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        (u.nis && u.nis.toLowerCase().includes(q));
+      return matchRole && matchSearch;
+    });
   }
 
   // ==================== RENDER ====================
+  function renderStats() {
+    const count = (role) => state.users.filter((u) => u.role === role).length;
+    els.totalAdmin.textContent = count('admin');
+    els.totalGuru.textContent = count('guru');
+    els.totalMurid.textContent = count('murid');
+    els.totalWali.textContent = count('wali');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\"/g, '&quot;');
+  }
+
   function roleLabel(role) {
     const map = { admin: 'Admin', guru: 'Guru', murid: 'Murid', wali: 'Wali' };
     return map[role] || role;
@@ -157,27 +224,6 @@
 
   function statusLabel(status) {
     return status === false ? 'Aktif' : 'Nonaktif';
-  }
-
-  function getFilteredUsers() {
-    return state.users.filter((u) => {
-      const matchRole = state.filteredRole === 'all' || u.role === state.filteredRole;
-      const q = state.searchQuery.toLowerCase();
-      const matchSearch =
-        !q ||
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        (u.nis && u.nis.toLowerCase().includes(q));
-      return matchRole && matchSearch;
-    });
-  }
-
-  function renderStats() {
-    const count = (role) => state.users.filter((u) => u.role === role).length;
-    els.totalAdmin.textContent = count('admin');
-    els.totalGuru.textContent = count('guru');
-    els.totalMurid.textContent = count('murid');
-    els.totalWali.textContent = count('wali');
   }
 
   function renderTable() {
@@ -209,7 +255,7 @@
         </td>
         <td>
           <div style="font-weight:500;">${escapeHtml(u.email)}</div>
-          ${u.nis && u.nis !== '-' ? `<div class="text-muted" style="font-size:12px;">NIS: ${escapeHtml(u.nis)}</div>` : ''}
+          ${(u.student?.nisn || u.guru?.nip) ? `<div class="text-muted" style="font-size:12px;">ID: ${escapeHtml(u.student?.nisn || u.guru?.nip)}</div>` : ''}
         </td>
         <td><span class="${roleClass(u.role)}">${roleLabel(u.role)}</span></td>
         <td><span class="${statusClass(u.blokir)}">${statusLabel(u.blokir)}</span></td>
@@ -226,15 +272,6 @@
       .join('');
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
   function render() {
     renderStats();
     renderTable();
@@ -242,18 +279,59 @@
 
   // ==================== MODAL ====================
   function openUserModal(user = null) {
-    state.editingId = user ? user.id : null;
-    els.modalTitle.textContent = user ? 'Edit Pengguna' : 'Tambah Pengguna';
-    els.userId.value = user ? user.id : '';
-    els.inputName.value = user ? user.name : '';
-    els.inputEmail.value = user ? user.email : '';
-    els.inputRole.value = user ? user.role : '';
-    els.inputNis.value = user && user.nis !== '-' ? user.nis : '';
-    els.inputWa.value = user && user.wa !== '-' ? user.wa : '';
-    els.inputPassword.value = '';
-    toggleExtraFields(user ? user.role : '');
-    els.userModal.classList.add('show');
-    setTimeout(() => els.inputName.focus(), 100);
+      state.editingId = user ? user.id : null;
+      els.modalTitle.textContent =  user? 'Edit Pengguna' : 'Tambah Pengguna';
+      els.userId.value = user ? user.id : '';
+      els.inputName.value = user ? user.name : '';
+      els.inputEmail.value = user ? user.email : '';
+      els.inputRole.value = user ? user.role : '';
+      els.inputPassword.placeholder = user? 'kosongkan jika tidak berubah' : 'masukkan password baru';
+
+      // Jika role wali, ambil daftar murid dari server untuk dipilih
+      
+      if (els.inputRole.value === 'wali') {
+        (async () => {
+          const muridList = await fetchChildren();
+          renderChildrenOptions(muridList);
+          els.childGroup.style.display = 'block';
+        })();
+      } else {
+        els.childGroup.style.display = 'none';
+        els.inputChild.innerHTML = '';
+      }
+
+      // PERBAIKAN DI SINI
+      if (user) {
+          // Karena relasi 'student', 'guru', 'wali' mungkin bernilai null,
+          // gunakan optional chaining (?.) agar tidak error
+          const nisn = user.student?.nisn || '';
+          const nip  = user.guru?.nip || '';
+
+          // WA bisa ada di tabel guru atau wali
+          const wa   = user.guru?.no_whatsapp || user.wali?.no_whatsapp || '';
+
+          // Logika inputNisn (karena di form HTML hanya ada 1 input untuk NISN/NIP)
+          if (user.role === 'murid') {
+              els.inputNisn.value = nisn;
+          } else if (user.role === 'guru') {
+              els.inputNisn.value = nip;
+          } else {
+              els.inputNisn.value = '';
+          }
+
+          els.inputWa.value = wa;
+      } else {
+          // Jika tambah user baru, kosongkan
+          els.inputNisn.value = '';
+          els.inputWa.value = '';
+      }
+
+      toggleExtraFields(user ? user.role : '');
+
+      
+
+      els.userModal.classList.add('show');
+      setTimeout(() => els.inputName.focus(), 100);
   }
 
   function closeUserModal() {
@@ -263,7 +341,15 @@
   }
 
   function toggleExtraFields(role) {
-    els.nisGroup.style.display = role === 'murid' || role === 'guru' ? 'block' : 'none';
+    els.nisGroup.style.display = role === 'murid' || role === 'guru' ? 'block' : 'none'; // block = show
+    if(role === 'murid')
+    {
+        els.idModal.innerHTML = 'NISN';
+    }else if(role === 'guru')
+    {
+        els.idModal.innerHTML = 'NIP/NUPTK'
+    }
+
     els.waGroup.style.display = role === 'wali' || role === 'guru' ? 'block' : 'none';
   }
 
@@ -306,8 +392,28 @@
       if (e.target === els.userModal) closeUserModal();
     });
 
-    // Role change → tampilkan field tambahan
-    els.inputRole.addEventListener('change', (e) => toggleExtraFields(e.target.value));
+    // Role change -> tampilkan field tambahan
+      // Role change -> tampilkan field tambahan
+    els.inputRole.addEventListener('change', async (e) => {
+        const selectedRole = e.target.value;
+        
+        // 1. Munculkan/sembunyikan field standar (NISN, WA, dll)
+        toggleExtraFields(selectedRole);
+
+        // 2. Logika untuk memunculkan List Anak jika memilih Wali
+        if (selectedRole === 'wali') {
+            els.childGroup.style.display = 'block';
+            
+            // Tampilkan loading sementara (opsional)
+            els.inputChild.innerHTML = '<option value="">Memuat data murid...</option>';
+            
+            const muridList = await fetchChildren();
+            renderChildrenOptions(muridList);
+        } else {
+            els.childGroup.style.display = 'none';
+            els.inputChild.innerHTML = '';
+        }
+    });
 
     // Submit form
     els.userForm.addEventListener('submit', async (e) => {
@@ -317,10 +423,13 @@
         name: els.inputName.value.trim(),
         email: els.inputEmail.value.trim(),
         role: els.inputRole.value,
-        nis: els.inputNis.value.trim() || '-',
+        anak: els.inputChild.value,
+        nisn: els.inputNisn.value.trim() || '-',
         wa: els.inputWa.value.trim() || '-',
         password: els.inputPassword.value,
         status: 'active',
+        // Kirim daftar NISN murid yang dipilih untuk role wali
+        children: Array.from(els.inputChild.selectedOptions).map(opt => opt.value),
       };
 
       if (!payload.name || !payload.email || !payload.role) {
@@ -340,7 +449,7 @@
           state.users.unshift({ ...payload, id: newId });
         }
         closeUserModal();
-        render();
+        await init();
       } catch (err) {
         alert('Gagal menyimpan pengguna: ' + err.message);
       }
@@ -389,17 +498,23 @@
     });
   }
 
-  // ==================== INIT ====================
-  async function init() {
+  // ==================== INIT ================
+// 1. Panggil bindEvents() HANYA SEKALI di luar
+document.addEventListener('DOMContentLoaded', () => {
     bindEvents();
+    init(); // init hanya untuk fetch data dan render
+});
+
+// 2. Hapus bindEvents() dari dalam init()
+async function init() {
     try {
-      state.users = await fetchUsers();
+        state.users = await fetchUsers();
     } catch (err) {
-      console.error('Gagal memuat data pengguna:', err);
-      state.users = [];
+        console.error('Gagal memuat data pengguna:', err);
+        state.users = [];
     }
     render();
-  }
+}
 
-  document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', init);
 })();

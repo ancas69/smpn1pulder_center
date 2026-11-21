@@ -40,4 +40,8 @@ Route::post('/auuuuuuu', function (){
 
 
 Route::post('/allUsers', [AdminController::class, 'tampilkan_semua_pengguna'])->name('admin.allUsers')->middleware('auth');
+Route::post('/api/murid', [AdminController::class, 'tampilkan_murid'])->name('admin.murid')->middleware('auth');
+
+Route::post('/api/pengguna/store', [AdminController::class, 'tambah_satu_pengguna'])->name('admin.pengguna.store')->middleware('auth');
+Route::post('/api/pengguna/delete/{id}', [AdminController::class, 'hapus_satu_user'])->name('admin.pengguna.delete')->middleware('auth');
 
