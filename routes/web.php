@@ -44,4 +44,4 @@ Route::post('/api/murid', [AdminController::class, 'tampilkan_murid'])->name('ad
 
 Route::post('/api/pengguna/store', [AdminController::class, 'tambah_satu_pengguna'])->name('admin.pengguna.store')->middleware('auth');
 Route::post('/api/pengguna/delete/{id}', [AdminController::class, 'hapus_satu_user'])->name('admin.pengguna.delete')->middleware('auth');
-
+Route::post('/api/pengguna/update/{id}', [AdminController::class, 'ubah_satu_data_pengguna'])->name('admin.pengguna.update')->middleware('auth');
