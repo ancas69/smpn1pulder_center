@@ -28,4 +28,6 @@ class WaliMurid extends Model
     {
         return $this->hasMany(Student::class, 'wali_id');
     }
+
+    
 }

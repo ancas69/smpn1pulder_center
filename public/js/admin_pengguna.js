@@ -69,6 +69,7 @@
     deleteName: document.getElementById('deleteName'),
     btnCancelDelete: document.getElementById('btnCancelDelete'),
     btnConfirmDelete: document.getElementById('btnConfirmDelete'),
+    i:0,
   };
 
   // ==================== API HELPER ====================
@@ -152,7 +153,7 @@
     });
     const data = await res.json();
     await init();
-    console.log(data);
+    // console.log(data);
     if (!data.success) {
     throw new Error(`(${data.message || 'Gagal menghapus'})`);
     }
@@ -162,7 +163,7 @@
     *  @param {Array} muridList
     *  @param {string} selectedNISN opsional: NISN yang sudah di-assign ke wali, akan di-highlight
     */
-    function renderChildrenOptions(muridList, selectedNISN = '') {
+  function renderChildrenOptions(muridList, selectedNISN = '') {
     els.inputChild.innerHTML = '';
     if (!muridList || muridList.length === 0) {
       const opt = document.createElement('option');
@@ -172,14 +173,26 @@
       els.inputChild.appendChild(opt);
       return;
     }
+    
     muridList.forEach((m) => {
+      els.i=0;
       const opt = document.createElement('option');
       opt.value = m.nisn;
       opt.textContent = `${m.name}  (${m.nisn})`;
-      if (m.nisn === selectedNISN) {
-        opt.selected = true; // highlight/anego relasi
+      while(els.i < selectedNISN.length)
+      {
+        
+        // console.log(selectedNISN[els.i]+" -- "+m.nisn);
+        if (m.nisn === selectedNISN[els.i]) {
+          // console.log(selectedNISN[els.i]+" sama");
+          opt.selected = true; // highlight/anego relasi
+        }
+        
+        els.i++;
       }
       els.inputChild.appendChild(opt);
+      
+      
     });
   }
 
@@ -292,11 +305,15 @@
       els.inputEmail.value = user ? user.email : '';
       els.inputRole.value = user ? user.role : '';
       els.inputPassword.placeholder = user? 'kosongkan jika tidak berubah' : 'masukkan password baru';
-
+      // console.log('user : '+user.user);
+      // console.log('guru :'+user.guru);
+      // console.log('murid :'+user.students);
+      // console.log(user);
       // Jika role wali, ambil daftar murid dari server untuk dipilih
       if (els.inputRole.value === 'wali') {
         (async () => {
           const muridList = await fetchChildren();
+          
           // ambil NISN anak yang sudah punya relasi wali (untuk highlight)
           const childrenNISN = new Set();
           if (user && user.wali && user.wali.students) {
@@ -484,14 +501,17 @@
     els.deleteModalClose.addEventListener('click', closeDeleteModal);
     els.btnCancelDelete.addEventListener('click', closeDeleteModal);
     els.deleteModal.addEventListener('click', (e) => {
+      
       if (e.target === els.deleteModal) closeDeleteModal();
     });
 
     els.btnConfirmDelete.addEventListener('click', async () => {
       if (!state.deletingId) return;
+      
       try {
         await deleteUser(state.deletingId);
         state.users = state.users.filter((u) => u.id !== state.deletingId);
+        
         closeDeleteModal();
         render();
       } catch (err) {

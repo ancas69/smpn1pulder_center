@@ -16,13 +16,15 @@ class AdminController extends Controller
     }
 
     public function halaman_pengguna(){
+           
         return view('admin.pengguna');
+
     }
 
     public function tampilkan_semua_pengguna()
     {
         // Eager Loading
-        $users = User::with(['student', 'guru', 'wali'])
+        $users = User::with(['student', 'guru', 'wali.students'])
                     ->orderBy('id', 'desc')
                     ->get();
                     
@@ -142,14 +144,22 @@ class AdminController extends Controller
         }
 
         // cek turunan data
-        $data_teacher = Teacher::find($userId);
-        $data_murid = Student::find($userId);
-        $data_wali = WaliMurid::find($userId);
+        $data_teacher = Teacher::where('user_id', $userId)->first();
+        $data_murid = Student::where('user_id', $userId)->first();
+        $data_wali = WaliMurid::where('user_id', $userId)->first();
         
         // jika data user ada di salah satu dari 3 tabel ini, hapus, jika tidak lewatkan
-        if($data_teacher) Teacher::where('user_id', $userId)->delete();
-        if($data_murid) Student::where('user_id', $userId)->delete();
-        if($data_wali) WaliMurid::where('user_id', $userId)->delete();
+        if($data_teacher){
+
+            $updateSiswa = Student::where('wali_id', $data_teacher->id);
+            $updateSiswa->update([
+                'wali_id' => null,
+            ]);
+            $data_teacher->delete();
+            
+        }
+        if($data_murid) $data_murid->delete();
+        if($data_wali) $data_wali->delete();
 
         // 4. Hapus user utama
         $user->delete();
