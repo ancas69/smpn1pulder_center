@@ -151,4 +151,123 @@ class AdminController extends Controller
             'message' => 'Pengguna berhasil dihapus.',
         ]);
     }
+
+    public function ubah_satu_data_pengguna(Request $request)
+    {
+        $userId = $request->route('id') ?? $request->input('id');
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'ID pengguna tidak ditemukan.',
+            ], 400);
+        }
+
+        $targetUser = User::find($userId);
+
+        if (!$targetUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengguna tidak ditemukan.',
+            ], 404);
+        }
+
+        $student = $targetUser->student;
+
+        // 1. Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $targetUser->id,
+            'role' => 'required|in:admin,guru,murid,wali',
+            'nisn' => 'nullable|string|max:20' . ($student ? '|unique:students,nisn,' . $student->id : ''),
+            'wa' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:8',
+            'anak' => 'nullable',
+            'children' => 'nullable|array',
+        ]);
+
+        $nisn = ($validated['nisn'] ?? null) === '-' ? null : ($validated['nisn'] ?? null);
+        $wa = ($validated['wa'] ?? null) === '-' ? null : ($validated['wa'] ?? null);
+
+        // 2. Update user utama
+        $targetUser->name = $validated['name'];
+        $targetUser->email = $validated['email'];
+        $targetUser->role = $validated['role'];
+
+        if (!empty($validated['password'])) {
+            $targetUser->password = bcrypt($validated['password']);
+        }
+
+        $targetUser->save();
+
+        // 3. Update data terkait berdasarkan role
+        switch ($validated['role']) {
+            case 'guru':
+                if ($targetUser->student) $targetUser->student()->delete();
+                if ($targetUser->wali) $targetUser->wali()->delete();
+
+                Teacher::updateOrCreate(
+                    ['user_id' => $targetUser->id],
+                    [
+                        'nip' => $nisn,
+                        'no_whatsapp' => $wa,
+                    ]
+                );
+                break;
+
+            case 'murid':
+                if ($targetUser->guru) $targetUser->guru()->delete();
+                if ($targetUser->wali) $targetUser->wali()->delete();
+
+                Student::updateOrCreate(
+                    ['user_id' => $targetUser->id],
+                    [
+                        'nisn' => $nisn,
+                        'kelas' => $targetUser->student->kelas ?? 'default',
+                        'qr_code_token' => $targetUser->student->qr_code_token ?? ('default' . $targetUser->id),
+                    ]
+                );
+                break;
+
+            case 'wali':
+                if ($targetUser->guru) $targetUser->guru()->delete();
+                if ($targetUser->student) $targetUser->student()->delete();
+
+                $waliMurid = WaliMurid::updateOrCreate(
+                    ['user_id' => $targetUser->id],
+                    [
+                        'nama_wali' => $validated['name'],
+                        'no_whatsapp' => $wa,
+                        'hubungan' => $targetUser->wali->hubungan ?? 'Orang Tua',
+                    ]
+                );
+
+                // Sinkronisasi anak murid
+                $childrenList = [];
+                if (!empty($validated['children']) && is_array($validated['children'])) {
+                    $childrenList = $validated['children'];
+                } elseif (!empty($validated['anak'])) {
+                    $childrenList = [$validated['anak']];
+                }
+
+                if (!empty($childrenList)) {
+                    Student::where('wali_id', $waliMurid->id)->update(['wali_id' => null]);
+                    Student::whereIn('nisn', $childrenList)->update(['wali_id' => $waliMurid->id]);
+                }
+                break;
+
+            case 'admin':
+                if ($targetUser->guru) $targetUser->guru()->delete();
+                if ($targetUser->student) $targetUser->student()->delete();
+                if ($targetUser->wali) $targetUser->wali()->delete();
+                break;
+        }
+
+        // 4. Return response JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pengguna berhasil diperbarui!',
+            'data' => $targetUser->fresh(['student', 'guru', 'wali']),
+        ]);
+    }
 }
