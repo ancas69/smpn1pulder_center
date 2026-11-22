@@ -18,7 +18,11 @@ class AdminController extends Controller
     public function halaman_pengguna(){
            
         return view('admin.pengguna');
+    }
 
+    public function halaman_berita(){
+        $beritas = [];
+        return view('admin.berita', compact('beritas'));
     }
 
     public function tampilkan_semua_pengguna()

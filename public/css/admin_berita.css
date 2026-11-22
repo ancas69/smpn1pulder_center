@@ -1,0 +1,506 @@
+/* ============================================================
+   admin_berita.css — Style khusus halaman Manajemen Berita
+   Self-contained: tidak bergantung pada admin_pengguna.css.
+   Hanya memakai CSS variable dari admin.css (:root & [data-theme]).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. FILTER BAR
+   ------------------------------------------------------------ */
+.berita-filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 40px;
+    border: 1px solid var(--border-light);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.filter-btn:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------
+   2. GRID & KARTU BERITA
+   ------------------------------------------------------------ */
+.berita-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.berita-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
+}
+
+.berita-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Thumbnail di kartu */
+.berita-thumb {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 4px;
+}
+
+.berita-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.berita-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    flex: 1;
+}
+
+.berita-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+
+.berita-card-summary {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.berita-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+}
+
+.berita-card-actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* ------------------------------------------------------------
+   3. BADGE — KATEGORI & STATUS
+   ------------------------------------------------------------ */
+.kategori-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 40px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.kategori-pengumuman { background: #eef2ff; color: #4f46e5; }
+.kategori-prestasi   { background: #e6f9f0; color: #0b6e4f; }
+.kategori-kegiatan   { background: #e3efff; color: #2a7de1; }
+.kategori-akademik   { background: #f3e8ff; color: #9333ea; }
+
+/* Status badge khusus berita (pakai class prefix berbeda agar
+   tidak bentrok dengan .status-badge di admin_pengguna.css) */
+.status-badge-draft     { background: #fff3e0; color: #b45f06; }
+.status-badge-published { background: #e6f9f0; color: #0b6e4f; }
+.status-badge-archived  { background: #f1f5f9; color: #475569; }
+
+/* .status-badge dasar — didefinisikan lokal agar mandiri */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   4. ACTION BUTTON (edit/hapus di kartu)
+   ------------------------------------------------------------ */
+.action-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.action-btn.danger:hover {
+    background: #ffeae9;
+    color: #b91c1c;
+}
+
+/* ------------------------------------------------------------
+   5. EMPTY STATE & ALERT
+   ------------------------------------------------------------ */
+.berita-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.berita-empty i {
+    font-size: 48px;
+    opacity: 0.35;
+    margin-bottom: 14px;
+    display: block;
+}
+
+.berita-empty p {
+    font-size: 14px;
+}
+
+.alert-success {
+    background: #e6f9f0;
+    color: #0b6e4f;
+    border: 1px solid #c9f0dd;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+/* ------------------------------------------------------------
+   6. MODAL (overlay, box, header, footer)
+   ------------------------------------------------------------ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-box {
+    background: var(--bg-card);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px;
+    box-shadow: var(--shadow-md);
+    animation: modalIn 0.2s ease;
+}
+
+.berita-modal-box {
+    max-width: 560px;
+}
+
+@keyframes modalIn {
+    from { transform: translateY(10px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    border: none;
+    background: var(--hover-bg);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+/* ------------------------------------------------------------
+   7. FORM
+   ------------------------------------------------------------ */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    background: var(--bg-body);
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--accent);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* ------------------------------------------------------------
+   8. BUTTONS
+   ------------------------------------------------------------ */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    padding: 11px 22px;
+    border-radius: 12px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-body);
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-danger:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.btn-primary i,
+.btn-danger i {
+    font-size: 13px;
+}
+
+/* ------------------------------------------------------------
+   9. UPLOAD THUMBNAIL
+   ------------------------------------------------------------ */
+.upload-thumb-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.upload-thumb-wrapper img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+}
+
+.upload-thumb-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: 1px dashed var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-thumb-label:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* ------------------------------------------------------------
+   10. RICH TEXT EDITOR (QUILL)
+   ------------------------------------------------------------ */
+#editorToolbar {
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border-light);
+    border-bottom: none;
+    background: var(--hover-bg);
+}
+
+#editorBerita {
+    min-height: 180px;
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid var(--border-light);
+    border-radius: 0 0 12px 12px;
+    background: var(--bg-body);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+    border-color: var(--border-light) !important;
+}
+
+.ql-toolbar.ql-snow {
+    border-radius: 12px 12px 0 0;
+    background: var(--hover-bg);
+    font-family: 'Inter', sans-serif;
+}
+
+.ql-container.ql-snow {
+    border-radius: 0 0 12px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+.ql-editor {
+    min-height: 180px;
+}
+
+.ql-editor img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+/* ------------------------------------------------------------
+   11. TOAST / STATUS UPLOAD
+   ------------------------------------------------------------ */
+.upload-status {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+}
+
+/* ------------------------------------------------------------
+   12. RESPONSIVE
+   ------------------------------------------------------------ */
+@media (max-width: 1200px) {
+    .berita-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .berita-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .upload-thumb-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -1,5 +1,9 @@
 @extends('templates.admin_templates')
 
+@push('style')
+    <link rel="stylesheet" href="{{ asset('css/admin_pengguna.css') }}">
+@endpush
+
 @section('content')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -162,6 +166,9 @@
             </div>
         </div>
     </div>
-
-    <script src="{{ asset('js/admin_pengguna.js') }}"></script>
 @endsection
+
+
+@push('script')
+    <script src="{{ asset('js/admin_pengguna.js') }}"></script>
+@endpush

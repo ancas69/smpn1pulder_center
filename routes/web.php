@@ -28,15 +28,30 @@ Route::get('/user/home', [UserController::class, 'halaman_home'])->name('user.ho
 
 Route::get('/admin/home', [AdminController::class, 'halaman_home'])->name('admin.home')->middleware('auth');
 Route::get('/admin/pengguna', [AdminController::class, 'halaman_pengguna'])->name('admin.pengguna')->middleware('auth');
+Route::get('/admin/berita', [AdminController::class, 'halaman_berita'])->name('admin.berita')->middleware('auth');
+
 
 
 
 
 Route::post('/auuuuuuu', function (){
+    return "";
+})->name('admin.berita.store')->middleware('auth');
+Route::post('/1', function (){
+    return "";
+})->name('admin.berita.update')->middleware('auth');
+Route::post('/2', function (){
+    return "";
+})->name('admin.berita.destroy')->middleware('auth');
+Route::post('/3', function (){
+    return "";
+})->name('admin.berita.uploadImage')->middleware('auth');
+
+
+Route::post('/4', function (){
     Auth::logout();
     return redirect('/'); // Kembali ke halaman depan
 })->name('logout')->middleware('auth');
-
 
 
 Route::post('/allUsers', [AdminController::class, 'tampilkan_semua_pengguna'])->name('admin.allUsers')->middleware('auth');
@@ -46,3 +61,5 @@ Route::post('/api/seluruh-anak', [AdminController::class, 'semua_anak'])->name('
 Route::post('/api/pengguna/store', [AdminController::class, 'tambah_satu_pengguna'])->name('admin.pengguna.store')->middleware('auth');
 Route::post('/api/pengguna/delete/{id}', [AdminController::class, 'hapus_satu_user'])->name('admin.pengguna.delete')->middleware('auth');
 Route::post('/api/pengguna/update/{id}', [AdminController::class, 'ubah_satu_data_pengguna'])->name('admin.pengguna.update')->middleware('auth');
+
+

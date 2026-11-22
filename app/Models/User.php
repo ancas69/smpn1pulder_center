@@ -45,4 +45,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(WaliMurid::class);
     }
+
+    /**
+     * Berita yang ditulis oleh user ini.
+     */
+    public function news()
+    {
+        return $this->hasMany(News::class);
+    }
 }

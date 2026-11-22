@@ -10,7 +10,10 @@
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}" </head>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @stack('style')
+
+</head>
 
 <body>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -25,13 +28,14 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="{{ route('admin.home') }}" class="nav-item active"><i class="fas fa-chart-pie"></i>
+                <a href="{{ route('admin.home') }}" class="nav-item"><i class="fas fa-chart-pie"></i>
                     Dashboard</a>
                 <a href="{{ route('admin.pengguna') }}" class="nav-item"><i class="fas fa-user-group"></i> Pengguna</a>
                 <a href="#" class="nav-item"><i class="fas fa-user-graduate"></i> Siswa</a>
                 <a href="#" class="nav-item"><i class="fas fa-chalkboard-user"></i> PTK</a>
                 <a href="#" class="nav-item"><i class="fas fa-calendar-check"></i> Daftar Hadir</a>
                 <a href="#" class="nav-item"><i class="fas fa-book-open"></i> Bimbel</a>
+                <a href="{{ route('admin.berita') }}" class="nav-item"><i class="fas fa-newspaper"></i> Berita</a>
                 <a href="#" class="nav-item"><i class="fas fa-futbol"></i> Ekstrakurikuler</a>
                 <a href="#" class="nav-item"><i class="fas fa-bell"></i> Notifikasi</a>
             </nav>
@@ -62,8 +66,8 @@
         </main>
     </div>
 
+    @stack('script')
     <script src="{{ asset('js/admin_global.js') }}"></script>
-    <script src="{{ asset('js/admin_dashboard.js') }}"></script>
 </body>
 
 </html>
