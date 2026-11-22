@@ -119,24 +119,26 @@
     return await res.json();
     }
 
-    /** Ambil daftar murid dari server (belum punya wali) untuk dipilih di form wali */
+    /** Ambil daftar murid dari server (belum punya wali untuk tambah, seluruh anak untuk update) */
     async function fetchChildren() {
-    try {
-    const res = await fetch('/api/murid', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': getCsrfToken()
-      }
-    });
-    if (!res.ok) {
-      throw new Error(`Gagal ambil data murid (${res.status})`);
-    }
-    return await res.json();
-    } catch (err) {
-    console.error('fetchChildren error:', err);
-    return [];
-    }
+        try {
+        const isUpdate = state.editingId != null;
+        const apiUrl = isUpdate ? '/api/seluruh-anak' : '/api/murid';
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken()
+          }
+        });
+        if (!res.ok) {
+          throw new Error(`Gagal ambil data murid (${res.status})`);
+        }
+        return await res.json();
+        } catch (err) {
+        console.error('fetchChildren error:', err);
+        return [];
+        }
     }
 
     /** Hapus pengguna menggunakan POST. @param {number} id @returns {Promise<void>} */
@@ -158,8 +160,9 @@
 
     /** Isi dropdown pilihan anak dengan daftar murid dari server
     *  @param {Array} muridList
+    *  @param {string} selectedNISN opsional: NISN yang sudah di-assign ke wali, akan di-highlight
     */
-    function renderChildrenOptions(muridList) {
+    function renderChildrenOptions(muridList, selectedNISN = '') {
     els.inputChild.innerHTML = '';
     if (!muridList || muridList.length === 0) {
       const opt = document.createElement('option');
@@ -173,6 +176,9 @@
       const opt = document.createElement('option');
       opt.value = m.nisn;
       opt.textContent = `${m.name}  (${m.nisn})`;
+      if (m.nisn === selectedNISN) {
+        opt.selected = true; // highlight/anego relasi
+      }
       els.inputChild.appendChild(opt);
     });
   }
@@ -288,11 +294,15 @@
       els.inputPassword.placeholder = user? 'kosongkan jika tidak berubah' : 'masukkan password baru';
 
       // Jika role wali, ambil daftar murid dari server untuk dipilih
-      
       if (els.inputRole.value === 'wali') {
         (async () => {
           const muridList = await fetchChildren();
-          renderChildrenOptions(muridList);
+          // ambil NISN anak yang sudah punya relasi wali (untuk highlight)
+          const childrenNISN = new Set();
+          if (user && user.wali && user.wali.students) {
+            user.wali.students.forEach((s) => childrenNISN.add(s.nisn));
+          }
+          renderChildrenOptions(muridList, Array.from(childrenNISN));
           els.childGroup.style.display = 'block';
         })();
       } else {

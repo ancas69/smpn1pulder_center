@@ -39,6 +39,15 @@ class AdminController extends Controller
         return response()->json($murid);
     }
 
+    public function semua_anak()
+    {
+        // Ambil semua murid untuk dipilih di form wali (edit/update)
+        $murid = Student::join('users', 'students.user_id', '=', 'users.id')
+                        ->select('students.nisn', 'users.name', 'students.wali_id')
+                        ->get();
+        return response()->json($murid);
+    }
+
     public function tambah_satu_pengguna(Request $form)
     {
         // 1. Validasi input
